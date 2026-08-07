@@ -6,7 +6,7 @@ This package contains general utils not specific to a certain model or piece of 
 ## Usage
 
 ### Installation
-```
+```{python}
 # Either using uv (uv is awesome, and you should probably be using it):
 uv add "eurogreen_python_utils @ git+https://github.com/sisu-fingreen/eurogreen_python_utils"
 # Or if using pip:
