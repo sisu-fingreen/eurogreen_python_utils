@@ -14,7 +14,7 @@ pip install eurogreen_python_utils@git+https://github.com/sisu-fingreen/eurogree
 
 ```
 
-### Categorization transformations
+### Usage example
 ```{python}
 import pandas as pd
 import numpy as np
