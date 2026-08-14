@@ -12,6 +12,7 @@ dependencies = [
     "odfpy>=1.4.1",
     "pandas>=3.0.5",
     "pytest>=9.1.1",
+    "requests>=2.34.2",
 ]
 license = "GPL-3.0-or-later"
 license-files= ["LICENSE"]
