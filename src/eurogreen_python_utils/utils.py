@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pandas.api.types import is_numeric_dtype
 import time
 import requests
 
@@ -19,6 +20,8 @@ def object_is_numeric(x):
         return array_or_series_is_numeric(x)
     elif isinstance(x, (int, float)):
         return True
+    elif isinstance(x, pd.DataFrame):
+        return all(x.dtypes.map(is_numeric_dtype))
 
     return False
 
@@ -66,6 +69,17 @@ def _get_conversion_factor(from_year: int, to_year: int) -> float:
     
     return(conversion_factor)
 
+def _apply_conversion_factors(x, from_years, to_years, conversion_factors: dict):
+
+    result = []
+    for val, f, t in zip(x, from_years, to_years):
+        if f == t:
+            result.append(val)
+        else:
+            result.append(val * conversion_factors[(f, t)])
+    
+    return result
+
 def convert_eur_value_between_years(x, from_years, to_years):
     """
     Convert euro values between years adjusting for inflation using StatFin API.
@@ -80,6 +94,7 @@ def convert_eur_value_between_years(x, from_years, to_years):
     
     Note that dtype of x is not necessarily matched by the return value, and will most likely be np.float64
     """
+    
     # Input validation
 
     assert object_is_numeric(x), "x must be numeric"
@@ -99,7 +114,7 @@ def convert_eur_value_between_years(x, from_years, to_years):
 
     # If no conversion needed, return original values
     if all(f == t for f, t in zip(from_years, to_years)):
-        return x
+        return x.copy()
 
     # Create unique year pairs
     year_pairs = pd.DataFrame({'from': from_years, 'to': to_years})
@@ -109,6 +124,7 @@ def convert_eur_value_between_years(x, from_years, to_years):
     # Get conversion factors for each unique year pair
     conversion_factors = {}
     
+    # use rate limit only if we make multiple calls
     if year_pairs.shape[0] > 1:
         sleep_time =  3.1
     else:
@@ -124,13 +140,14 @@ def convert_eur_value_between_years(x, from_years, to_years):
         time.sleep(sleep_time)
 
     # Apply conversion factors to input values
-    result = []
-    for val, f, t in zip(x, from_years, to_years):
-        if f == t:
-            result.append(val)
-        else:
-            result.append(val * conversion_factors[(f, t)])
-    
+
+    if x_orig_type == pd.DataFrame:
+        result = x.apply(
+            lambda y: _apply_conversion_factors(y, from_years, to_years, conversion_factors)
+        )
+        return result
+
+    result = _apply_conversion_factors(x, from_years, to_years, conversion_factors)
     if x_orig_type == float or x_orig_type == int:
         result = float(result[0])
     if x_orig_type == np.ndarray:
