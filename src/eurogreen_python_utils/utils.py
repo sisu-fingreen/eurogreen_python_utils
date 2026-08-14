@@ -153,6 +153,6 @@ def convert_eur_value_between_years(x, from_years, to_years):
     elif x_orig_type == np.ndarray:
         result = np.array(result)
     elif x_orig_type == pd.Series:
-        result = pd.Series(result, index=x.index)
+        result = pd.Series(result, index=x.index, name=x.name)
 
     return result
