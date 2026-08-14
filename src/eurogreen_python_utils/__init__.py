@@ -1,4 +1,4 @@
-from src.eurogreen_python_utils.utils import (
+from .utils import (
     list_is_numeric,
     array_or_series_is_numeric,
     object_is_numeric,
