@@ -150,9 +150,9 @@ def convert_eur_value_between_years(x, from_years, to_years):
     result = _apply_conversion_factors(x, from_years, to_years, conversion_factors)
     if x_orig_type == float or x_orig_type == int:
         result = float(result[0])
-    if x_orig_type == np.ndarray:
+    elif x_orig_type == np.ndarray:
         result = np.array(result)
     elif x_orig_type == pd.Series:
-        result = pd.Series(result)
+        result = pd.Series(result, index=x.index)
 
     return result
