@@ -91,3 +91,5 @@ wiod_df_validations = egpuv.validate_df(
 )
 
 ```
+---
+This package has been developed with funding from the [Saastamoinen Foundation](https://saastamoinenfoundation.fi/en).
